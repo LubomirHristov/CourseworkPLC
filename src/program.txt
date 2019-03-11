@@ -1,1 +1,1 @@
-print 99:
+print (append 0 (append 1))

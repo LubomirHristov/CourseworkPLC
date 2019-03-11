@@ -13,21 +13,25 @@ import Tokens
 %tokentype { Token }
 %error { parseError }
 %token
-input       {TokenInput _}
 print       {TokenPrint _}
-':'         {TokenConcat _}
+append      {TokenAppend _}
+'('         {TokenLParen _}
+')'         {TokenRParen _}
 num         {TokenNum _ $$}
 
 %%
 
 
 Exp:
-    print num ':' {TokenPrintconcat $2}
+    print Exp          {MyTokenPrint  $2}
+    | append num Exp   {MyTokenAppend $2 $3}
+    | append num       {MyFinalTokenAppend $2}
+    | '(' Exp ')'      {$2}
 {
 parseError :: [Token] -> a
 parseError [] = error "Unknown parse error"
 parseError (t:ts) = error ("Parse error at " ++ (tokenPosn t))
 
-data Exp = TokenPrintconcat Int
+data Exp = MyTokenPrint Exp | MyTokenAppend Int Exp | MyFinalTokenAppend Int
   deriving (Eq,Show)
 }
