@@ -1,0 +1,4 @@
+print duplicate
+
+perform (x1 duplicate)
+perform (x1 +2 x2 +3)
