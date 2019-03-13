@@ -18,7 +18,7 @@ main = do
            -- putStrLn("-----------------------------------------")
            -- let result = eval1 (parsedProg) (convert input 0 [])
            return input
-          -- putStrLn ("Evaluates to " ++ (unparse result) ++ "\n")
+           -- putStrLn ("Evaluates to " ++ (unparse result) ++ "\n")
 
 main' :: IO()
 main' = do
@@ -38,7 +38,7 @@ mainloop acc inh flag =
                   return ()
            else do inpStr <- hGetLine inh
                    if flag  --if should continue
-                      then do 
+                      then do
                               let result = eval1 (parsedProg) (convert' inpStr)
                               mainloop ((fst result) ++ acc) inh (snd result) --call mainloop with the result and a flag that tells us if we should continue making the same operations
                       else do mainloop (acc ++ [(convert' inpStr)]) inh False --concatinate the result wit hthe rest of the input
