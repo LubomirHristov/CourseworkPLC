@@ -15,7 +15,6 @@ import Tokens
 %token
 print       {TokenPrint _}
 append      {TokenAppend _}
-apply       {TokenApply _}
 copy        {TokenCopy _}
 '('         {TokenLParen _}
 ')'         {TokenRParen _}
@@ -25,6 +24,7 @@ copy        {TokenCopy _}
 '/'         {TokenDiv _}
 ','         {TokenComma _}
 num         {TokenNum _ $$}
+var         {TokenVar _ $$}
 
 %%
 
@@ -32,25 +32,31 @@ num         {TokenNum _ $$}
 Exp:
     print Exp          {MyTokenPrint  $2}
     | Exp ',' Exp      {MyTokenSeparator $1 $3}
-    | apply Op         {MyTokenApply $2}
+    | var Op Exp       {MyTokenStreamOp $1 $2 $3}
+    | var Op           {MyTokenVarOp $2}
     | copy             {MyTokenCopy}
+    | var              {MyTokenVar $1}
     | '(' Exp ')'      {$2}
 
 Op:
     append num         {MyTokenAppend $2}
-    | '+' num          {MyTokenPlus  $2}
-    | '-' num          {MyTokenMinus $2}
-    | '*' num          {MyTokenTimes $2}
-    | '/' num          {MyTokenDiv   $2}
+    | '+' num          {MyTokenPlusNum  $2}
+    | '-' num          {MyTokenMinusNum $2}
+    | '*' num          {MyTokenTimesNum $2}
+    | '/' num          {MyTokenDivNum   $2}
+    | '+'              {MyTokenPlus}
+    | '-'              {MyTokenMinus}
+    | '*'              {MyTokenTimes}
+    | '/'              {MyTokenDiv}
 
 {
 parseError :: [Token] -> a
 parseError [] = error "Unknown parse error"
 parseError (t:ts) = error ("Parse error at " ++ (tokenPosn t))
 
-data Op = MyTokenAppend Int | MyTokenPlus Int | MyTokenMinus Int | MyTokenTimes Int | MyTokenDiv Int
+data Op = MyTokenAppend Int | MyTokenPlusNum Int | MyTokenMinusNum Int | MyTokenTimesNum Int | MyTokenDivNum Int | MyTokenPlus | MyTokenMinus | MyTokenTimes | MyTokenDiv
   deriving (Eq, Show)
 
-data Exp = MyTokenPrint Exp | MyTokenSeparator Exp Exp | MyTokenApply Op | MyTokenCopy
+data Exp = MyTokenPrint Exp | MyTokenSeparator Exp Exp | MyTokenStreamOp String Op Exp | MyTokenVarOp Op | MyTokenCopy | MyTokenVar String
   deriving (Eq,Show)
 }

@@ -5,14 +5,12 @@
 %wrapper "posn"
 $digit = 0-9
 $alpha = [a-zA-Z]
-$eol = [\n]
 
 tokens :-
   "//".*        ;
   $white+       ;
   "print"       {\p s -> TokenPrint p}
   "append"      {\p s -> TokenAppend p}
-  "apply"       {\p s -> TokenApply p}
   "copy"        {\p s -> TokenCopy p}
   \(            {\p s -> TokenLParen p}
   \)            {\p s -> TokenRParen p}
@@ -29,7 +27,6 @@ tokens :-
 data Token =
      TokenPrint AlexPosn
     | TokenAppend AlexPosn
-    | TokenApply AlexPosn
     | TokenCopy AlexPosn
     | TokenLParen AlexPosn
     | TokenRParen AlexPosn
@@ -45,7 +42,6 @@ data Token =
 tokenPosn :: Token -> String
 tokenPosn (TokenPrint  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenAppend  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenApply  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenCopy  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLParen  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenRParen  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
