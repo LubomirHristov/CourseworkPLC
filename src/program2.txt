@@ -1,4 +1,1 @@
-print copy 
-
-perform (x1 duplicate)
-perform (x1 +2 x2 +3)
+(x0 copy), (x1 copy), (x2 copy)

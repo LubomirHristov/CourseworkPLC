@@ -37,14 +37,14 @@ Exp:
     | Exp ',' Exp      {MyTokenSeparator $1 $3}
     | out '[' Exp ']'  {MyTokenOutArr $3}
     | var Op Exp       {MyTokenStreamOp $1 $2 $3}
-    | var Op           {MyTokenVarOp $2}
-    | copy             {MyTokenCopy}
+    | var Op           {MyTokenVarOp $1 $2}
     | var              {MyTokenVar $1}
     | num              {MyTokenNum $1}
     | '(' Exp ')'      {$2}
 
 Op:
     append num         {MyTokenAppend $2}
+    | copy             {MyTokenCopy}
     | '+' num          {MyTokenPlusNum  $2}
     | '-' num          {MyTokenMinusNum $2}
     | '*' num          {MyTokenTimesNum $2}
@@ -59,9 +59,9 @@ parseError :: [Token] -> a
 parseError [] = error "Unknown parse error"
 parseError (t:ts) = error ("Parse error at " ++ (tokenPosn t))
 
-data Op = MyTokenAppend Int | MyTokenPlusNum Int | MyTokenMinusNum Int | MyTokenTimesNum Int | MyTokenDivNum Int | MyTokenPlus | MyTokenMinus | MyTokenTimes | MyTokenDiv
+data Op = MyTokenAppend Int | MyTokenCopy | MyTokenPlusNum Int | MyTokenMinusNum Int | MyTokenTimesNum Int | MyTokenDivNum Int | MyTokenPlus | MyTokenMinus | MyTokenTimes | MyTokenDiv
   deriving (Eq, Show)
 
-data Exp = MyTokenPrint Exp | MyTokenSeparator Exp Exp | MyTokenOutArr Exp | MyTokenStreamOp String Op Exp | MyTokenVarOp Op | MyTokenCopy | MyTokenVar String | MyTokenNum Int
+data Exp = MyTokenPrint Exp | MyTokenSeparator Exp Exp | MyTokenOutArr Exp | MyTokenStreamOp String Op Exp | MyTokenVarOp String Op | MyTokenVar String | MyTokenNum Int
   deriving (Eq,Show)
 }

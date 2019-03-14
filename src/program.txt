@@ -1,1 +1,0 @@
-print (append 0)
