@@ -12,6 +12,9 @@ tokens :-
   "print"       {\p s -> TokenPrint p}
   "append"      {\p s -> TokenAppend p}
   "copy"        {\p s -> TokenCopy p}
+  "out"         {\p s -> TokenOut p}
+  \[            {\p s -> TokenLArr p}
+  \]            {\p s -> TokenRArr p}
   \(            {\p s -> TokenLParen p}
   \)            {\p s -> TokenRParen p}
   \+            {\p s -> TokenPlus p}
@@ -28,6 +31,9 @@ data Token =
      TokenPrint AlexPosn
     | TokenAppend AlexPosn
     | TokenCopy AlexPosn
+    | TokenOut AlexPosn
+    | TokenLArr AlexPosn
+    | TokenRArr AlexPosn
     | TokenLParen AlexPosn
     | TokenRParen AlexPosn
     | TokenPlus AlexPosn
