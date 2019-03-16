@@ -5,11 +5,14 @@ import System.Environment
 import Control.Exception
 import System.IO
 import Data.Char
+import Data.List
+import Data.Maybe
 
 main :: IO()
 main = do
-          inh <- openFile "input.txt" ReadMode
-          sourceText <- readFile "program1.txt"
+          [fileName , input ] <- getArgs
+          inh <- openFile input ReadMode
+          sourceText <- readFile fileName
           let parsedProg = parseCalc (alexScanTokens sourceText)
           mainloop parsedProg inh []
           hClose inh
@@ -50,11 +53,29 @@ isMyNumber (x:[]) | isDigit x = True
 isMyNumber (x:xs) | (isDigit x) = isMyNumber xs
                   | otherwise = False
 
+printArray :: [Int] -> IO()
+printArray [] = return ()
+printArray (x:xs) = do
+                      putStr((show x) ++ " ")
+                      printArray xs
+
+printAppend :: [Int] -> [Int] -> Int -> Int -> Int -> IO()
+printAppend acc (x:xs) numStream index len
+                                          | len == numStream = printArray (x:xs)
+                                          | index == len - 1 = do
+                                                                  putStr("\n")
+                                                                  printAppend [] (acc ++ [x]) numStream 0 ((length acc) + 1)
+                                          | index `mod` (len `div` numStream) == 0 = do
+                                                                                        putStr((show x) ++ " ")
+                                                                                        printAppend acc xs numStream (index+1) len
+                                          | otherwise = printAppend (acc ++ [x]) xs numStream (index+1) len
+
+
 execute :: Exp -> ([Int],String) -> String -> Handle -> [[Int]] -> IO()
 execute parsedProg result line inh out = do
                               if((snd result) == "append")
                                 then do
-                                        myprint (fst result)
+                                        printAppend [] (fst result) (length (convert line)) 0 (length (fst result))
                                         putStr("\n")
                                         putStr (line)
                                         putStr("\n")

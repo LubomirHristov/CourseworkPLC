@@ -10,7 +10,7 @@ eval1 (MyTokenVar v) out _ = ([extract "" v],"")
 
 eval1 (MyTokenLimit n) out _ = ([],(show n))
 
-eval1 (MyTokenVarOp v (MyTokenAppend n)) out xs | length out == 0 = ([n], "append")
+eval1 (MyTokenVarOp v (MyTokenAppend e)) out xs | length out == 0 = (fst(eval1 e out xs), "append")
                                                 | otherwise = ([(xs !! index)], "")
                                                     where index = extract "" v
 
