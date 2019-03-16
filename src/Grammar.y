@@ -13,7 +13,7 @@ import Tokens
 %tokentype { Token }
 %error { parseError }
 %token
-print       {TokenPrint _}
+limit       {TokenLimit _}
 append      {TokenAppend _}
 copy        {TokenCopy _}
 out         {TokenOut _}
@@ -33,8 +33,9 @@ var         {TokenVar _ $$}
 
 
 Exp:
-    print Exp          {MyTokenPrint  $2}
-    | Exp ',' Exp      {MyTokenSeparator $1 $3}
+
+     Exp ',' Exp       {MyTokenSeparator $1 $3}
+    | limit num        {MyTokenLimit  $2}
     | out '[' Exp ']'  {MyTokenOutArr $3}
     | var Op Exp       {MyTokenStreamOp $1 $2 $3}
     | var Op           {MyTokenVarOp $1 $2}
@@ -62,6 +63,6 @@ parseError (t:ts) = error ("Parse error at " ++ (tokenPosn t))
 data Op = MyTokenAppend Int | MyTokenCopy | MyTokenPlusNum Int | MyTokenMinusNum Int | MyTokenTimesNum Int | MyTokenDivNum Int | MyTokenPlus | MyTokenMinus | MyTokenTimes | MyTokenDiv
   deriving (Eq, Show)
 
-data Exp = MyTokenPrint Exp | MyTokenSeparator Exp Exp | MyTokenOutArr Exp | MyTokenStreamOp String Op Exp | MyTokenVarOp String Op | MyTokenVar String | MyTokenNum Int
+data Exp = MyTokenLimit Int | MyTokenSeparator Exp Exp | MyTokenOutArr Exp | MyTokenStreamOp String Op Exp | MyTokenVarOp String Op | MyTokenVar String | MyTokenNum Int
   deriving (Eq,Show)
 }

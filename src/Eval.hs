@@ -8,6 +8,8 @@ eval1 (MyTokenNum n) out _ = ([n],"")
 
 eval1 (MyTokenVar v) out _ = ([extract "" v],"")
 
+eval1 (MyTokenLimit n) out _ = ([],(show n))
+
 eval1 (MyTokenVarOp v (MyTokenAppend n)) out xs | length out == 0 = ([n], "append")
                                                 | otherwise = ([(xs !! index)], "")
                                                     where index = extract "" v
@@ -55,6 +57,16 @@ eval1 (MyTokenStreamOp v1 (MyTokenMinus) (MyTokenVar v2)) out xs = ([entry1 - en
         entry2 = xs !! index2
         index1 = extract "" v1
         index2 = extract "" v2
+
+eval1 (MyTokenStreamOp v (MyTokenMinus) (MyTokenOutArr e)) out xs | length out == 0 = ([entry1], "")
+                                                                 | length out < length(fst(eval1 e out xs)) = ([entry1 - head(last out)], "")
+                                                                 | otherwise = ([entry1 - sum(fst(eval1 (MyTokenOutArr e) out xs))], "")
+                                                                    where
+                                                                      entry1 = xs !! index1
+                                                                      index1 = extract "" v
+
+
+
 eval1 (MyTokenStreamOp v (MyTokenMinus) e) out xs = ([entry - head (fst(eval1 e out xs))], "")
       where
         entry = xs !! index
@@ -66,6 +78,16 @@ eval1 (MyTokenStreamOp v1 (MyTokenTimes) (MyTokenVar v2)) out xs = ([entry1 * en
         entry2 = xs !! index2
         index1 = extract "" v1
         index2 = extract "" v2
+
+
+eval1 (MyTokenStreamOp v (MyTokenTimes) (MyTokenOutArr e)) out xs | length out == 0 = ([entry1], "")
+                                                                 | length out < length(fst(eval1 e out xs)) = ([entry1 * head(last out)], "")
+                                                                 | otherwise = ([entry1 * product(fst(eval1 (MyTokenOutArr e) out xs))], "")
+                                                                    where
+                                                                      entry1 = xs !! index1
+                                                                      index1 = extract "" v
+
+
 eval1 (MyTokenStreamOp v (MyTokenTimes) e) out xs = ([entry * head (fst(eval1 e out xs))], "")
       where
         entry = xs !! index
@@ -77,12 +99,13 @@ eval1 (MyTokenStreamOp v1 (MyTokenDiv) (MyTokenVar v2)) out xs = ([entry1 `div` 
         entry2 = xs !! index2
         index1 = extract "" v1
         index2 = extract "" v2
+
 eval1 (MyTokenStreamOp v (MyTokenDiv) e) out xs = ([entry `div` head (fst(eval1 e out xs))], "")
       where
         entry = xs !! index
         index = extract "" v
 
-eval1 (MyTokenSeparator e1 e2) out xs = (fst (eval1 e1 out xs) ++ fst (eval1 e2 out xs), "")
+eval1 (MyTokenSeparator e1 e2) out xs = (fst (eval1 e1 out xs) ++ fst (eval1 e2 out xs), (snd (eval1 e1 out xs)))
 
 
 extract :: String -> String -> Int

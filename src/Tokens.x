@@ -9,7 +9,7 @@ $alpha = [a-zA-Z]
 tokens :-
   "//".*        ;
   $white+       ;
-  "print"       {\p s -> TokenPrint p}
+  "limit"       {\p s -> TokenLimit p}
   "append"      {\p s -> TokenAppend p}
   "copy"        {\p s -> TokenCopy p}
   "out"         {\p s -> TokenOut p}
@@ -28,7 +28,7 @@ tokens :-
 
 {
 data Token =
-     TokenPrint AlexPosn
+     TokenLimit AlexPosn
     | TokenAppend AlexPosn
     | TokenCopy AlexPosn
     | TokenOut AlexPosn
@@ -46,7 +46,7 @@ data Token =
     deriving (Eq,Show)
 
 tokenPosn :: Token -> String
-tokenPosn (TokenPrint  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenLimit  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenAppend  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenCopy  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLParen  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
