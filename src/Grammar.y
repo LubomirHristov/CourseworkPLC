@@ -44,7 +44,7 @@ Exp:
     | '(' Exp ')'      {$2}
 
 Op:
-    append num         {MyTokenAppend $2}
+     append num        {MyTokenAppend $2}
     | copy             {MyTokenCopy}
     | '+' num          {MyTokenPlusNum  $2}
     | '-' num          {MyTokenMinusNum $2}

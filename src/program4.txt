@@ -1,1 +1,1 @@
-(limit 6),(x0 + out[0,1]),(x1 + out[0,1]) //this is a comment
+(limit 6),(x0 * out[0]) //this is a comment

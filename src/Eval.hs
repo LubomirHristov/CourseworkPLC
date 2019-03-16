@@ -107,7 +107,6 @@ eval1 (MyTokenStreamOp v (MyTokenDiv) e) out xs = ([entry `div` head (fst(eval1 
 
 eval1 (MyTokenSeparator e1 e2) out xs = (fst (eval1 e1 out xs) ++ fst (eval1 e2 out xs), (snd (eval1 e1 out xs)))
 
-
 extract :: String -> String -> Int
 extract acc [] = read acc
 extract acc (x:xs) | isDigit x = extract (acc ++ [x]) xs

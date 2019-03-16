@@ -55,7 +55,10 @@ execute parsedProg result line inh out = do
                               if((snd result) == "append")
                                 then do
                                         myprint (fst result)
+                                        putStr("\n")
                                         putStr (line)
+                                        putStr("\n")
+                                        mainloop parsedProg inh ([fst result] ++ out)
                                 else do
                                   myprint (fst result)
                                   putStr("\n")
