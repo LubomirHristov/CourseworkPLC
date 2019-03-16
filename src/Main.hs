@@ -9,7 +9,7 @@ import Data.Char
 main :: IO()
 main = do
           inh <- openFile "input.txt" ReadMode
-          sourceText <- readFile "program4.txt"
+          sourceText <- readFile "program1.txt"
           let parsedProg = parseCalc (alexScanTokens sourceText)
           mainloop parsedProg inh []
           hClose inh
