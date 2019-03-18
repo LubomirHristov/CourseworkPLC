@@ -17,7 +17,7 @@ mainloop :: Exp -> [[Int]] -> IO()
 mainloop parsedProg out = do
                             ineof <- isEOF
                             if ineof
-                                then do return ()
+                                then do return()
                                 else do
                                         line <- getLine
                                         let result = eval1 parsedProg out (convert line)

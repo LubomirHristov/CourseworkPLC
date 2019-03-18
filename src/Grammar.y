@@ -29,12 +29,16 @@ out         {TokenOut _}
 num         {TokenNum _ $$}
 var         {TokenVar _ $$}
 
+%left '+'
+%left '-'
+%left '*'
 %%
 
 
 Exp:
 
      Exp ',' Exp       {MyTokenSeparator $1 $3}
+    | Exp Op Exp       {MyTokenExpOperation $1 $2 $3}
     | limit num        {MyTokenLimit  $2}
     | out '[' Exp ']'  {MyTokenOutArr $3}
     | var Op Exp       {MyTokenStreamOp $1 $2 $3}
@@ -63,6 +67,6 @@ parseError (t:ts) = error ("Parse error at " ++ (tokenPosn t))
 data Op = MyTokenAppend Exp | MyTokenCopy | MyTokenPlusNum Int | MyTokenMinusNum Int | MyTokenTimesNum Int | MyTokenDivNum Int | MyTokenPlus | MyTokenMinus | MyTokenTimes | MyTokenDiv
   deriving (Eq, Show)
 
-data Exp = MyTokenLimit Int | MyTokenSeparator Exp Exp | MyTokenOutArr Exp | MyTokenStreamOp String Op Exp | MyTokenVarOp String Op | MyTokenVar String | MyTokenNum Int
+data Exp = MyTokenLimit Int | MyTokenSeparator Exp Exp | MyTokenExpOperation Exp Op Exp| MyTokenOutArr Exp | MyTokenStreamOp String Op Exp | MyTokenVarOp String Op | MyTokenVar String | MyTokenNum Int
   deriving (Eq,Show)
 }

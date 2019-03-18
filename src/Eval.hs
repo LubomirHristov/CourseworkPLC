@@ -2,11 +2,14 @@ module Eval where
 import Grammar
 import Data.Char
 
---       exp    currout    line     out
+--       exp    currout    line      out  , operation
 eval1 :: Exp -> [[Int]] -> [Int] -> ([Int], String)
 eval1 (MyTokenNum n) out _ = ([n],"")
 
-eval1 (MyTokenVar v) out _ = ([extract "" v],"")
+eval1 (MyTokenVar v) out xs = ([entry1],"")
+      where
+        entry1 = xs !! index1
+        index1 = extract "" v
 
 eval1 (MyTokenLimit n) out _ = ([],(show n))
 
@@ -104,6 +107,14 @@ eval1 (MyTokenStreamOp v (MyTokenDiv) e) out xs = ([entry `div` head (fst(eval1 
       where
         entry = xs !! index
         index = extract "" v
+
+eval1 (MyTokenExpOperation e1 (MyTokenPlus) e2) out xs = ([(head(fst(eval1 e1 out xs)) + head(fst(eval1 e2 out xs)))],"")
+
+eval1 (MyTokenExpOperation e1 (MyTokenMinus) e2) out xs = ([(head(fst(eval1 e1 out xs)) - head(fst(eval1 e2 out xs)))],"")
+
+eval1 (MyTokenExpOperation e1 (MyTokenTimes) e2) out xs = ([(head(fst(eval1 e1 out xs)) * head(fst(eval1 e2 out xs)))],"")
+
+eval1 (MyTokenExpOperation e1 (MyTokenDiv) e2) out xs = ([(head(fst(eval1 e1 out xs)) `div` head(fst(eval1 e2 out xs)))],"")
 
 eval1 (MyTokenSeparator e1 e2) out xs = (fst (eval1 e1 out xs) ++ fst (eval1 e2 out xs), (snd (eval1 e1 out xs)))
 
