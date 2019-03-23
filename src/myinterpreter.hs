@@ -17,7 +17,7 @@ main = do
           putStrLn ("Parsed as " ++ (show parsedProg) ++ "\n")
           putStrLn ("Type Checking : " ++ (show parsedProg) ++ "\n")
           let typedProg = typeOf parsedProg
-          putStrLn ("Type Checking Passed with type " ++ (unparseType typedProg) ++ "\n") 
+          putStrLn ("Type Checking Passed with type " ++ (unparseType typedProg) ++ "\n")
           mainloop parsedProg [] 0
 
 mainloop :: Exp -> [[Int]] -> Int -> IO()
