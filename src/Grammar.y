@@ -29,9 +29,6 @@ out         {TokenOut _}
 num         {TokenNum _ $$}
 var         {TokenVar _ $$}
 
-%left '+'
-%left '-'
-%left '*'
 %%
 
 
