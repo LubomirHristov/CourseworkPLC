@@ -10,7 +10,7 @@ tokens :-
   "//".*        ;
   $white+       ;
   "limit"       {\p s -> TokenLimit p}
-  "append"      {\p s -> TokenAppend p}
+  "prepend"     {\p s -> TokenPrepend p}
   "copy"        {\p s -> TokenCopy p}
   "out"         {\p s -> TokenOut p}
   \[            {\p s -> TokenLArr p}
@@ -29,7 +29,7 @@ tokens :-
 {
 data Token =
      TokenLimit AlexPosn
-    | TokenAppend AlexPosn
+    | TokenPrepend AlexPosn
     | TokenCopy AlexPosn
     | TokenOut AlexPosn
     | TokenLArr AlexPosn
@@ -47,7 +47,7 @@ data Token =
 
 tokenPosn :: Token -> String
 tokenPosn (TokenLimit  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenAppend  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenPrepend  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenCopy  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLParen  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenRParen  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)

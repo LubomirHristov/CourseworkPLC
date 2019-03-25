@@ -79,7 +79,7 @@ printArray (x:xs) = do
                       putStr((show x) ++ " ")
                       printArray xs
 
---prints the numbers that have to be prepended (handles multiple streams and ultiple appends)
+--prints the numbers that have to be prepended (handles multiple streams and multiple prepends)
 {-
   @parameters
   acc - stores the numbers that don't have to be printed on the current iteration
@@ -88,55 +88,62 @@ printArray (x:xs) = do
   index - current index of the list
   len - original length of the list
 -}
-printAppend :: [Int] -> [Int] -> Int -> Int -> Int -> IO()
-printAppend acc (x:xs) numStream index len
+printPrepend :: [Int] -> [Int] -> Int -> Int -> Int -> Int -> Int -> IO()
+printPrepend acc (x:xs) numStream index len numOfLines count
+                                          | count > numOfLines = return()
                                           | len == numStream = printArray (x:xs)
                                           | index == len - 1 = do
                                                                   putStr("\n")
                                                                   --add the last number to the acc and => increase its length by 1
-                                                                  printAppend [] (acc ++ [x]) numStream 0 ((length acc) + 1)
+                                                                  printPrepend [] (acc ++ [x]) numStream 0 ((length acc) + 1) numOfLines (count+1)
                                           | index `mod` (len `div` numStream) == 0 = do
                                                                                         putStr((show x) ++ " ")
                                                                                         --print elem and increase index
-                                                                                        printAppend acc xs numStream (index+1) len
-                                          | otherwise = printAppend (acc ++ [x]) xs numStream (index+1) len --just store the current element
+                                                                                        printPrepend acc xs numStream (index+1) len numOfLines count
+                                          | otherwise = printPrepend (acc ++ [x]) xs numStream (index+1) len numOfLines count --just store the current element
 
 --a helper function that continues evaluating the input
 execute :: Exp -> ([Int],String) -> String -> [[Int]] -> Int -> IO()
 execute parsedProg result line out lineLen = do
-                              if((snd result) == "append") --if we have to append
+                              if((snd result) == "prepend") --if we have to prepend
                                 then do
-                                        printAppend [] (fst result) (length (convert line)) 0 (length (fst result))
-                                        putStr("\n")
-                                        putStr (line)
-                                        putStr("\n")
                                         let list = convertIOlist (getNumberOfLines 0 [])
-                                        let numOfLines = head list
+                                        let numOfLines = head(head list)
                                         let rest = tail list
-                                        printRemainingLines (numOfLines - (length(fst result) `div` (length (convert line)))) rest
+                                        printPrepend [] (fst result) (length (convert line)) 0 (length (fst result)) numOfLines 0
+                                        if numOfLines < (length(fst result) `div` (length (convert line)))
+                                                  then do return()
+                                                  else do
+                                                            putStr("\n")
+                                                            putStr (line)
+                                                            putStr("\n")
+
+                                                            --putStrLn(show rest)
+                                                            printRemainingLines (numOfLines - (length(fst result) `div` (length (convert line)))) rest
                                 else do --else just print the simple output
                                   myprint (fst result)
                                   putStr("\n")
                                   mainloop parsedProg ([fst result] ++ out) lineLen
 
-printRemainingLines :: Int -> [Int]-> IO()
+printRemainingLines :: Int -> [[Int]]-> IO()
 printRemainingLines i (x:xs)= do
                           if i == 0
                             then do return()
                             else do
-                                    putStr((show x) ++ "\n")
+                                    printArray x
+                                    putStr("\n")
                                     printRemainingLines (i-1) xs
 
 
-getNumberOfLines :: Int -> [Int] -> IO [Int]
+getNumberOfLines :: Int -> [[Int]] -> IO [[Int]]
 getNumberOfLines c acc = do
                       ineof <- isEOF
                       if ineof
                         then do
-                          return (c:acc)
+                          return ([[c]] ++ acc)
                         else do
                               line <- getLine
-                              getNumberOfLines (c+1) (acc ++ (convert line))
+                              getNumberOfLines (c+1) (acc ++ [(convert line)])
 
-convertIOlist :: IO [Int] -> [Int]
+convertIOlist :: IO [[Int]] -> [[Int]]
 convertIOlist x = unsafePerformIO x

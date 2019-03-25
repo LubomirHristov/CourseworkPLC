@@ -1,1 +1,1 @@
-(x0 append[0,0]),(x1 append[1,1]),(x2 append [2,2])
+(x0 prepend[0,0]),(x1 prepend[1,1]),(x2 prepend [2,2])

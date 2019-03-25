@@ -14,7 +14,7 @@ import Tokens
 %error { parseError }
 %token
 limit       {TokenLimit _}
-append      {TokenAppend _}
+prepend     {TokenPrepend _}
 copy        {TokenCopy _}
 out         {TokenOut _}
 '['         {TokenLArr _}
@@ -45,7 +45,7 @@ Exp:
     | '(' Exp ')'      {$2}
 
 Op:
-     append '[' Exp ']'        {MyTokenAppend $3}
+     prepend '[' Exp ']'  {MyTokenPrepend $3}
     | copy             {MyTokenCopy}
     | '+' num          {MyTokenPlusNum  $2}
     | '-' num          {MyTokenMinusNum $2}
@@ -61,7 +61,7 @@ parseError :: [Token] -> a
 parseError [] = error "Unknown parse error"
 parseError (t:ts) = error ("Parse error at " ++ (tokenPosn t))
 
-data Op = MyTokenAppend Exp | MyTokenCopy | MyTokenPlusNum Int | MyTokenMinusNum Int | MyTokenTimesNum Int | MyTokenDivNum Int | MyTokenPlus | MyTokenMinus | MyTokenTimes | MyTokenDiv
+data Op = MyTokenPrepend Exp | MyTokenCopy | MyTokenPlusNum Int | MyTokenMinusNum Int | MyTokenTimesNum Int | MyTokenDivNum Int | MyTokenPlus | MyTokenMinus | MyTokenTimes | MyTokenDiv
   deriving (Eq, Show)
 
 data Exp = MyTokenLimit Int | MyTokenSeparator Exp Exp | MyTokenExpOperation Exp Op Exp| MyTokenOutArr Exp | MyTokenStreamOp String Op Exp | MyTokenVarOp String Op | MyTokenVar String | MyTokenNum Int
