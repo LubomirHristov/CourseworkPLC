@@ -43,7 +43,7 @@ eval1 (MyTokenStreamOp v1 (MyTokenPlus) (MyTokenVar v2)) out xs = ([entry1 + ent
         index2 = extract "" v2
 
 eval1 (MyTokenStreamOp v (MyTokenPlus) (MyTokenOutArr e)) out xs | length out == 0 = ([entry1], "")
-                                                                 | length out < length(fst(eval1 e out xs)) = ([entry1 + ((last out) !! index1)], "")
+                                                                 | length out < length(fst(eval1 e out xs)) = ([entry1 + (getStreamOutSoFar out index1)], "")
                                                                  | otherwise = ([entry1 + sum(extractFromOut index1 out (fst(eval1 e out xs)))], "")
                                                                     where
                                                                       entry1 = xs !! index1
@@ -126,3 +126,7 @@ extract acc (x:xs) | isDigit x = extract (acc ++ [x]) xs
 extractFromOut :: Int -> [[Int]] -> [Int] -> [Int]
 extractFromOut index out [] = []
 extractFromOut index out (x:xs) = ((out !! x) !! index) : extractFromOut index out xs
+
+getStreamOutSoFar :: [[Int]] -> Int -> Int
+getStreamOutSoFar [] _ = 0
+getStreamOutSoFar (x:xs) index = (x !! index) + getStreamOutSoFar xs index

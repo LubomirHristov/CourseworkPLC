@@ -12,12 +12,11 @@ main :: IO()
 main = do
           (fileName : _) <- getArgs
           sourceText <- readFile fileName
-          putStrLn ("Parsing : " ++ sourceText)
+          -- putStrLn ("Parsing : " ++ sourceText)
           let parsedProg = parseCalc (alexScanTokens sourceText)
-          putStrLn ("Parsed as " ++ (show parsedProg) ++ "\n")
-          putStrLn ("Type Checking : " ++ (show parsedProg) ++ "\n")
-          let typedProg = typeOf parsedProg
-          putStrLn ("Type Checking Passed with type " ++ (unparseType typedProg) ++ "\n")
+          -- putStrLn ("Parsed as " ++ (show parsedProg) ++ "\n")
+          -- putStrLn ("Type Checking : " ++ (show parsedProg) ++ "\n")
+          -- putStrLn ("Type Checking Passed with type " ++ (unparseType typedProg) ++ "\n")
           mainloop parsedProg [] 0
 
 mainloop :: Exp -> [[Int]] -> Int -> IO()
