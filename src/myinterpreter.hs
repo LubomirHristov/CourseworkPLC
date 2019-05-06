@@ -14,13 +14,13 @@ main = do
           sourceText <- readFile fileName
           -- putStrLn ("Parsing : " ++ sourceText)
           let parsedProg = parseCalc (alexScanTokens sourceText)
-          -- putStrLn ("Parsed as " ++ (show parsedProg) ++ "\n")
+          --putStrLn ("Parsed as " ++ (show parsedProg) ++ "\n")
           -- putStrLn ("Type Checking : " ++ (show parsedProg) ++ "\n")
           -- putStrLn ("Type Checking Passed with type " ++ (unparseType typedProg) ++ "\n")
-          mainloop parsedProg [] 0
+          mainloop parsedProg [] [] 0
 
-mainloop :: Exp -> [[Int]] -> Int -> IO()
-mainloop parsedProg out lineLen = do
+mainloop :: Exp -> [[Int]] -> [[Int]] -> Int -> IO()
+mainloop parsedProg input out lineLen = do
                                   ineof <- isEOF
                                   if ineof
                                       then do return()
@@ -33,15 +33,17 @@ mainloop parsedProg out lineLen = do
                                                 True -> return ()
                                                 False -> error "Inconsistent input length"
                                               let lineLen = length (convert line)
-                                              let result = eval1 parsedProg out (convert line)
+                                              --putStrLn(show out)
+                                              let result = eval1 parsedProg input out (convert line)
+                                              --putStrLn(show result)
                                               if(isMyNumber (snd result)) --if snd result is the limit
                                                 then do
                                                   if (read (snd result) == length out) --if limit is reached
                                                     then do return ()
                                                     else do --else continue reading lines
-                                                      execute parsedProg result line out lineLen
+                                                      execute parsedProg result line input out lineLen
                                                 else do --else continue reading lines
-                                                      execute parsedProg result line out lineLen
+                                                      execute parsedProg result line input out lineLen
 
 
 hasAlpha :: String -> Bool
@@ -102,13 +104,13 @@ printPrepend acc (x:xs) numStream index len numOfLines count
                                           | otherwise = printPrepend (acc ++ [x]) xs numStream (index+1) len numOfLines count --just store the current element
 
 --a helper function that continues evaluating the input
-execute :: Exp -> ([Int],String) -> String -> [[Int]] -> Int -> IO()
-execute parsedProg result line out lineLen = do
+execute :: Exp -> ([Int],String) -> String -> [[Int]] -> [[Int]] -> Int -> IO()
+execute parsedProg result line input out lineLen = do
+                              let list = convertIOlist (getNumberOfLines 0 [])
+                              let rest = tail list
                               if((snd result) == "prepend") --if we have to prepend
                                 then do
-                                        let list = convertIOlist (getNumberOfLines 0 [])
                                         let numOfLines = head(head list)
-                                        let rest = tail list
                                         printPrepend [] (fst result) (length (convert line)) 0 (length (fst result)) numOfLines 0
                                         if numOfLines < (length(fst result) `div` (length (convert line)))
                                                   then do return()
@@ -119,10 +121,21 @@ execute parsedProg result line out lineLen = do
 
                                                             --putStrLn(show rest)
                                                             printRemainingLines (numOfLines - (length(fst result) `div` (length (convert line)))) rest
+                                else if((snd result) == "emptyPrepend")
+                                    then do printEmptyPrepend line (show (head (fst result))) rest
                                 else do --else just print the simple output
-                                  myprint (fst result)
-                                  putStr("\n")
-                                  mainloop parsedProg ([fst result] ++ out) lineLen
+                                myprint (fst result)
+                                putStr("\n")
+                                mainloop parsedProg ([[(read line :: Int)]] ++ input) ([fst result] ++ out) lineLen
+
+printEmptyPrepend :: String -> String -> [[Int]] -> IO()
+printEmptyPrepend line temp [] = do
+                            putStr(line ++ " " ++ temp)
+                            putStr("\n")
+printEmptyPrepend line temp (x:xs) = do
+                            putStr(line ++ " " ++ temp)
+                            putStr("\n")
+                            printEmptyPrepend (show (head x)) line xs
 
 printRemainingLines :: Int -> [[Int]]-> IO()
 printRemainingLines i (x:xs)= do
